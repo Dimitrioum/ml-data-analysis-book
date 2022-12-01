@@ -1,0 +1,3 @@
+[submodule "CapsNet-Keras"]
+	path = CapsNet-Keras
+	url = https://github.com/XifengGuo/CapsNet-Keras
