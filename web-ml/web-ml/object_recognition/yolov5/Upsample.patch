@@ -1,0 +1,31 @@
+--- /usr/local/lib/python3.6/dist-packages/torch/nn/modules/upsampling.py
++++ /usr/local/lib/python3.6/dist-packages/torch/nn/modules/upsampling.py
+@@ -111,14 +111,8 @@
+                   [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]]]])
+     """
+     __constants__ = ['size', 'scale_factor', 'mode', 'align_corners', 'name']
+-    name: str
+-    size: _size_any_t
+-    scale_factor: _ratio_any_t
+-    mode: str
+-    align_corners: bool
+ 
+-    def __init__(self, size: Optional[_size_any_t] = None, scale_factor: Optional[_ratio_any_t] = None,
+-                 mode: str = 'nearest', align_corners: Optional[bool] = None) -> None:
++    def __init__(self, size=None, scale_factor=None, mode='nearest', align_corners=None):
+         super(Upsample, self).__init__()
+         self.name = type(self).__name__
+         self.size = size
+@@ -129,10 +123,10 @@
+         self.mode = mode
+         self.align_corners = align_corners
+ 
+-    def forward(self, input: Tensor) -> Tensor:
++    def forward(self, input):
+         return F.interpolate(input, self.size, self.scale_factor, self.mode, self.align_corners)
+ 
+-    def extra_repr(self) -> str:
++    def extra_repr(self):
+         if self.scale_factor is not None:
+             info = 'scale_factor=' + str(self.scale_factor)
+         else:

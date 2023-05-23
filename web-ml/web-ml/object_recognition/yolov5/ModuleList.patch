@@ -1,0 +1,77 @@
+--- /usr/local/lib/python3.6/dist-packages/torch/nn/modules/container.py
++++ /usr/local/lib/python3.6/dist-packages/torch/nn/modules/container.py
+@@ -22,7 +22,7 @@
+                 return x
+     """
+ 
+-    def __init__(self, modules: Optional[Iterable[Module]] = None) -> None:
++    def __init__(self, modules=None):
+         super(ModuleList, self).__init__()
+         if modules is not None:
+             self += modules
+@@ -37,17 +37,17 @@
+         return str(idx)
+ 
+     @_copy_to_script_wrapper
+-    def __getitem__(self, idx: int) -> Module:
++    def __getitem__(self, idx):
+         if isinstance(idx, slice):
+             return self.__class__(list(self._modules.values())[idx])
+         else:
+             return self._modules[self._get_abs_string_index(idx)]
+ 
+-    def __setitem__(self, idx: int, module: Module) -> None:
++    def __setitem__(self, idx, module):
+         idx = self._get_abs_string_index(idx)
+         return setattr(self, str(idx), module)
+ 
+-    def __delitem__(self, idx: Union[int, slice]) -> None:
++    def __delitem__(self, idx):
+         if isinstance(idx, slice):
+             for k in range(len(self._modules))[idx]:
+                 delattr(self, str(k))
+@@ -58,14 +58,14 @@
+         self._modules = OrderedDict(list(zip(str_indices, self._modules.values())))
+ 
+     @_copy_to_script_wrapper
+-    def __len__(self) -> int:
++    def __len__(self):
+         return len(self._modules)
+ 
+     @_copy_to_script_wrapper
+-    def __iter__(self) -> Iterator[Module]:
++    def __iter__(self):
+         return iter(self._modules.values())
+ 
+-    def __iadd__(self: T, modules: Iterable[Module]) -> T:
++    def __iadd__(self, modules):
+         return self.extend(modules)
+ 
+     @_copy_to_script_wrapper
+@@ -74,7 +74,7 @@
+         keys = [key for key in keys if not key.isdigit()]
+         return keys
+ 
+-    def insert(self, index: int, module: Module) -> None:
++    def insert(self, index, module):
+         r"""Insert a given module before a given index in the list.
+ 
+         Arguments:
+@@ -85,7 +85,7 @@
+             self._modules[str(i)] = self._modules[str(i - 1)]
+         self._modules[str(index)] = module
+ 
+-    def append(self: T, module: Module) -> T:
++    def append(self, module):
+         r"""Appends a given module to the end of the list.
+ 
+         Arguments:
+@@ -94,7 +94,7 @@
+         self.add_module(str(len(self)), module)
+         return self
+ 
+-    def extend(self: T, modules: Iterable[Module]) -> T:
++    def extend(self, modules):
+         r"""Appends modules from a Python iterable to the end of the list.
+ 
+         Arguments:

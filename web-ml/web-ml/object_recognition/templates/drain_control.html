@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+{% load static %}
+{% load object_recognition_extras %}
+<html>
+    <head>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/demo.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/component.css' %}" />
+        <meta charset="utf-8">
+        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+        <title>Контроль слива топлива</title>
+        <link rel="stylesheet" type="text/css" href="{% static "css/background_obj_rec.css" %}" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script src="{% static 'js/celery_progress.js' %}"></script>
+        <script type="text/javascript">
+           /**
+            * Функция для трансформации момента времени в секундах в строку формата ЧЧ:ММ:СС (часы, минуты, секунды)
+            * @name get_text_timestamp
+            * @param {int} time_in_seconds - момент времени в секундах
+            * @return {string} - строка формата ЧЧ:ММ:СС (часы, минуты, секунды)
+            */
+            function get_text_timestamp(time_in_seconds) {
+              if (time_in_seconds < 60)  {
+                var text_timestamp = "00:00:" + time_in_seconds.toString().padStart(2, "0");
+              } else if ((time_in_seconds >= 60) & (time_in_seconds < 3600)) {
+                var minutes = parseInt(time_in_seconds / 60);
+                var seconds = time_in_seconds - (minutes * 60);
+                var text_timestamp = "00:" + minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+              } else if (time_in_seconds >= 3600) {
+                var hours = parseInt(time_in_seconds / 3600);
+                var minutes = parseInt((time_in_seconds - hours * 3600) / 60);
+                var seconds = time_in_seconds - (hours * 3600) - (minutes * 60);
+                var text_timestamp = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+              };
+              return text_timestamp;
+            };
+
+            function recognizeObjects() {
+                var selected_elements = new Array();
+                var checkbox = document.getElementById('checkbox_list');
+                var checkbox_choice = checkbox.getElementsByTagName("input");
+                for (var i = 0; i < checkbox_choice.length; i++) {
+                    if (checkbox_choice[i].checked) {
+                        selected_elements.push(checkbox_choice[i].value);
+                    }
+                }
+
+                var selected_patterns = new Array();
+                var checkbox = document.getElementById('pattern_list');
+                var checkbox_choice = checkbox.getElementsByTagName("input");
+                for (var i = 0; i < checkbox_choice.length; i++) {
+                    if (checkbox_choice[i].checked) {
+                        selected_patterns.push(checkbox_choice[i].value);
+                    }
+                }
+
+                if (selected_elements.length > 0) {
+                    document.getElementById('display_selected_files').innerHTML = 'Выберите объекты для распознавания в выбранных видео/фото: (' + selected_elements + ')';
+                    console.log(selected_elements) + ':';
+                    // document.getElementById('pattern_list').style.display = "block";
+                }
+
+                $.ajaxSetup({
+                         beforeSend: function(xhr, settings) {
+                             function getCookie(name) {
+                                 var cookieValue = null;
+                                 if (document.cookie && document.cookie != '') {
+                                     var cookies = document.cookie.split(';');
+                                     for (var i = 0; i < cookies.length; i++) {
+                                         var cookie = jQuery.trim(cookies[i]);
+                                         if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                             break;
+                                         }
+                                     }
+                                 }
+                                 return cookieValue;
+                             }
+                             if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                                 // Only send the token to relative URLs i.e. locally.
+                                 xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                             }
+                         }
+                    });
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'object_recognition:recognition_page' %}",
+                    // data: {
+                    //     'selected_elements' : selected_elements,
+                    // },
+                    data: JSON.stringify([selected_elements, selected_patterns]),
+                    dataType: "text",
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        // console.log('from recognition data is :' + data);
+                        var keys = Object.keys(data["response"]);
+                        var list = document.getElementById("display_timeline");
+                        console.log(data.response);
+                        if (keys.length > 0) {
+                          document.getElementById('timeline_introduction').innerHTML = 'На видео были обнаружены следующие объекты: (в формате ЧЧ:ММ:СС)';
+                        }
+                        else {
+                          document.getElementById('timeline_introduction').innerHTML = 'На видео не было обнаружено искомых объектов';
+                          return;
+                        };
+                        for (var i = 0; i < keys.length; i++) {
+                          var log = keys[i];
+                          var timeline = data["response"][keys[i]];
+                          var entry = document.createElement('li');
+                          var start_time = get_text_timestamp(timeline[0]);
+                          var end_time   = get_text_timestamp(timeline[1]);
+                          if (log.includes("bottles")) {
+                            entry.appendChild(document.createTextNode("Бутыль:        "
+                             + start_time + " - " + end_time));
+                          } else if (log.includes("canisters")) {
+                            entry.appendChild(document.createTextNode("Канистра:      "
+                              + start_time + " - " + end_time));
+                          } else if (log.includes("buckets")) {
+                            entry.appendChild(document.createTextNode("Ведро:         "
+                             + start_time + " - " + end_time));
+                          } else if (log.includes("hoses")) {
+                            entry.appendChild(document.createTextNode("Сливной шланг: "
+                             + start_time + " - " + end_time));
+                          };
+
+                          list.appendChild(entry);
+                        };
+                    },
+                    failure: function (data) {
+                        alert("Необходимо выбрать хотя бы один файл из списка");
+                    },
+            });
+    }
+            function updateProgress(progressBarElement, progressBarMessageElement, progress) {
+                          progressBarElement.style.width = progress.percent + "%";
+                          progressBarMessageElement.innerHTML = 'Пронализировано ' + progress.current + ' из ' + progress.total + ' %';
+                        }
+
+            function getCheckedValues(linkToFile) {
+                var selected_elements = new Array();
+                var checkbox = document.getElementById('checkbox_list');
+                var checkbox_choice = checkbox.getElementsByTagName("input");
+                for (var i = 0; i < checkbox_choice.length; i++) {
+                    if (checkbox_choice[i].checked) {
+                        selected_elements.push(checkbox_choice[i].value);
+                    }
+                }
+
+                if (selected_elements.length > 0) {
+                    document.getElementById('display_selected_files').innerHTML = 'Выберите объекты для распознавания в выбранных видео/фото: (' + selected_elements + ')';
+                    console.log(selected_elements) + ':';
+                    document.getElementById('pattern_list').style.display = "block";
+                    document.getElementById('recognize_button').style.display = "block";
+                    var trigger = document.getElementById('recognize_button');
+                    trigger.addEventListener('click', function(e) {
+                        var bar = document.getElementById("progress-bar");
+                        var barMessage = document.getElementById("progress-bar-message");
+                        var number_of_frames = 100;
+                        for (var i = 0; i < 11; i++) {
+                        setTimeout(updateProgress, 3000 * i, bar, barMessage, {
+                          percent: i * 10,
+                          current: i * 10,
+                          total: 100,
+                        });
+
+                      };
+                        barMessage = linkToFile;
+                    });
+                  }
+                else {
+                    alert('Выберите хотя бы один файл из списка')
+                };
+
+                $.ajaxSetup({
+                         beforeSend: function(xhr, settings) {
+                             function getCookie(name) {
+                                 var cookieValue = null;
+                                 if (document.cookie && document.cookie != '') {
+                                     var cookies = document.cookie.split(';');
+                                     for (var i = 0; i < cookies.length; i++) {
+                                         var cookie = jQuery.trim(cookies[i]);
+                                         // Does this cookie string begin with the name we want?
+                                         if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                             break;
+                                         }
+                                     }
+                                 }
+                                 return cookieValue;
+                             }
+                             if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                                 // Only send the token to relative URLs i.e. locally.
+                                 xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                             }
+                         }
+                    });
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'object_recognition:recognition_page' %}",
+                    // data: {
+                    //     'selected_elements' : selected_elements,
+                    // },
+                    data: JSON.stringify(selected_elements),
+                    dataType: "text",
+                    failure: function (data) {
+                        alert("Необходимо выбрать хотя бы один файл из списка");
+                    },
+
+                });
+            }
+
+        </script>
+    </head>
+
+    <body>
+        <div class="page" id="page-docu">
+          <header class="bp-header cf">
+            <h1 class="bp-header__title">Контроль слива топлива</h1>
+          </header>
+        <div class="form_container">
+        <form action="{% url "object_recognition:recognition_page" %}" method="post" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <p>{{ form.non_field_errors }}</p>
+
+            <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+
+            <p>
+                {{ form.docfile.errors }}
+                {{ form.docfile }}
+            </p>
+
+            <p><input type="submit" value="Загрузить"/></p>
+            {% if message %}
+                {{ message }}
+            {% endif %}
+        </form>
+        </div>
+
+        <div class="list_container">
+        Загруженные файлы:
+        {% if documents_drain_control %}
+            <ul class="list" id="checkbox_list">
+                {% for document in documents_drain_control %}
+                    <input type="checkbox" value="{{ document.docfile.url }}" id="{{ document.docfile.name }}"><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a><br />
+                {% endfor %}
+            </ul>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="button" value="Выбрать файлы для дальнейшей обработки" onclick="getCheckedValues()">
+        </form>
+
+        {% else %}
+            <p>Файлы отсутствуют</p>
+        {% endif %}
+        <br>
+        <b id="display_selected_files"> </b>
+        <div class="pattern_list" >
+        <ul class="list" id="pattern_list" style="display: none;">
+            {% for pattern in patterns %}
+                <input type="checkbox" value="{{ pattern }}"><b> {{ pattern }} </b><br />
+            {% endfor %}
+        </ul>
+        <form method="POST">
+        <div id="progress-wrapper">
+            {% csrf_token %}
+            <input type="button" id="recognize_button" style="display: none;" value="Запустить процесс распознавания" onclick="recognizeObjects()">
+        </form>
+          <p id="timeline_introduction"> </p>
+          <ol id="display_timeline"></ol>
+        </div>
+        </div>
+          <div id="progress-bar" style="background-color: blue; width: 0%;">&nbsp;</div>
+          <div id="progress-bar-message"></div>
+        </div>
+        {% csrf_token %}
+        </div>
+
+        <div class="output_container">
+        {% csrf_token %}
+        Проанализированные файлы:
+        {% if documents_output_drain_control %}
+
+            <ul class="list" id="checkbox_list">
+                {% for doc in documents_output_drain_control %}
+                    <input type="checkbox" value="{{ doc.outputfile.url }}" id="{{ doc.outputfile.name }}"><a href="{{ doc.outputfile.url }}">{{ doc.outputfile.name }}</a><br />
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Файлы отсутствуют</p>
+        {% endif %}
+
+        </div>
+
+    </body>
+</html>

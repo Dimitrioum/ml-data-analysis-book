@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Вход в учетную запись{% endblock %}
+{% block content %}
+    <header class="bp-header cf">
+        <h1 class="bp-header__title">Вход в учетную запись</h1>
+    </header>
+    <body>
+        <div class="page" id="page-docu">
+            <div class="form_container">
+                <p>Введите логин и пароль</p>
+                <form action="." method="post">
+                    {{ form.as_p }}
+                    {% csrf_token %}
+                <p><input type="submit" value="Войти"></p>
+                </form>
+            </div>
+        </div>
+    </body>
+
+    
+{% endblock %}
