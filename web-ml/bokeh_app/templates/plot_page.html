@@ -1,0 +1,83 @@
+{% load static %}
+<html>
+    <head>
+            <link href="http://cdn.pydata.org/bokeh/release/bokeh-2.0.2.min.css" rel=”stylesheet” type=”text/css”>
+            <link href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-2.0.2.min.css" rel=”stylesheet” type=”text/css”>
+            <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+            <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+            <link rel="stylesheet" type="text/css" href="{% static 'css/demo.css' %}" />
+            <link rel="stylesheet" type="text/css" href="{% static 'css/component.css' %}" />
+            <link rel="style" type="text/css" href="{% static 'css/containers.css' %}"/>
+            <title>Построение интерактивных графиков</title>
+    </head>
+        <body>
+            <div class="pages-stack">
+            <header class="bp-header cf">
+                <h1 class="bp-header__title">Интерактивная визуализация данных</h1>
+            </header>
+        	<form action="{% url 'bokeh_app:plot_page' %}" method="post" enctype="multipart/form-data">
+	            {% csrf_token %}
+		            <input type="file"
+		            	   value="Выберите файл"
+		                   title="Загрузите отчет с GeoCode"
+		                   name="excel_file"
+		                   style="border: 1px solid black; padding: 5px;"
+		                   required="required">
+		            <p>
+		            <input type="submit"
+		                   value="Построить график"
+		                   style="border: 1px solid green; padding:5px; border-radius: 2px; cursor: pointer;">
+                    </p>
+        	</form>
+            
+            {{ div | safe }}
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/2.0.2/bokeh.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/2.0.2/bokeh-widgets.min.js"></script>
+            {{ script | safe }}
+            </div>
+
+        </body>
+    
+</html>
+
+<!-- <html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Financial Data</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.0/css/bulma.css" />
+</head>
+
+
+<body>
+    <nav class="navbar hero is-dark is-bold has-text-centered" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item">
+                <h1 class="title has-text-weight-normal is-1 has-text-white">
+                    Django-Bokeh-AlphaVantage
+                </h1>
+            </a>
+        </div>
+    </nav>
+    <section class="container">
+        <div class="columns">
+            <div class="column">
+
+            </div>
+            <div class="column is-6">
+                {{ div | safe }}
+            </div>
+            <div class="column">
+
+            </div>
+        </div>
+    </section>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/2.0.2/bokeh.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/2.0.2/bokeh-widgets.min.js"></script>
+    {{ script | safe }}
+</body>
+
+</html> -->
