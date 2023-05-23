@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Создать учетную запись{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+ 	<header class="bp-header cf">
+        <h1 class="bp-header__title">Регистрация учетной записи</h1>
+ 	</header>
+ 	<div class="page" id="page-docu">
+ 		<div class="form_container">
+	        <p>Заполните обязательные поля</p>
+		    <form method="POST" class="form-group">
+				{% csrf_token %}
+				{{ form|crispy }}
+				<button type="submit" class="btn btn-success">Зарегистрироваться</button>
+		    </form>
+	    </div>
+	</div>
+{% endblock %}
