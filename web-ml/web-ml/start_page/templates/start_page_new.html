@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Книга "Глубокое обучение и анализ данных"</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'favicon-32x32.png' %}"/>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/demo.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/component.css' %}" />
+  <link rel="style" type="text/css" href="{% static 'css/containers.css' %}"/>
+  <script src="{% static 'js/modernizr-custom.js' %}"></script>
+</head>
+
+<body>
+  <!-- navigation -->
+  <nav class="pages-nav">
+    <div class="pages-nav__item"><a class="link link--page" href="#page-home">Домашняя страница</a></div>
+    <div class="pages-nav__item"><a class="link link--page" href="#page-manuals">Интеллектуальный анализ данных</a></div>
+    <div class="pages-nav__item"><a class="link link--page" href="#page-software">Интерактивная визуализация данных</a></div>
+    <div class="pages-nav__item pages-nav__item--small"><a class="link link--page link--faded" href="#page-buy">Сделать запрос</a></div>
+    <div class="pages-nav__item pages-nav__item--small"><a class="link link--page link--faded" href="#page-blog">Блог &amp; Новости</a></div>
+    <div class="pages-nav__item pages-nav__item--small"><a class="link link--page link--faded" href="#page-contact">Контакты</a></div>
+    <div class="pages-nav__item pages-nav__item--social">
+      <a class="link link--social link--faded" href="#"><i class="fa fa-twitter"></i><span class="text-hidden">Twitter</span></a>
+      <a class="link link--social link--faded" href="#"><i class="fa fa-linkedin"></i><span class="text-hidden">LinkedIn</span></a>
+      <a class="link link--social link--faded" href="#"><i class="fa fa-facebook"></i><span class="text-hidden">Facebook</span></a>
+      <a class="link link--social link--faded" href="https://www.youtube.com/watch?v=iIqpiGGju8w"><i class="fa fa-youtube-play"></i><span class="text-hidden">YouTube</span></a>
+    </div>
+  </nav>
+  <!-- /navigation-->
+  <!-- pages stack -->
+  <div class="pages-stack">
+    <!-- page -->
+    <div class="page" id="page-home">
+      <!-- Blueprint header -->
+      <header class="bp-header cf">
+        <span class="bp-header__present">Глубокое обучение и анализ данных</span>
+        <h1 class="bp-header__title">Дмитрий Малов</h1>
+        <p class="bp-header__desc">Приятного изучения!</p>
+      </header>
+      <div class="logo-row">
+        <img class="poster" src="{% static 'images/qrcode.svg' %}" alt="qrcode" />
+      </div>
+    </div>
+    <!-- /page -->
+    <div class="page" id="page-manuals">
+      <header class="bp-header cf">
+        <h1 class="bp-header__title">Интеллектуальный анализ данных</h1>
+        <p class="info">
+          Сервис по интеллектуальному анализу видео и фото материалов позволяет в автоматизированном режиме решать следующие задачи: <br />
+          &mdash; выявлять ситуации с несанкционированным сливом топлива путем распознавания недопустимых объектов на сцене.
+          Для работы с сервисом по распознаванию объектов перейдите по ссылке: <a href="{% url 'object_recognition:recognition_page' %}" target="_blank">Распознавание объектов на видео</a> <br />
+          &mdash; распознавать автомобильные номерa.
+          Для работы с сервисом по распознаванию марки автомобиля и автомобильных номеров перейдите по ссылке: <a href="{% url 'object_recognition:car_plates_page' %}" target="_blank">Распознавание автомобилей и автомобильных номеров на видео</a>
+        </p>
+      </header>
+      <!-- <img class="poster" src="{% static 'images/2.jpg' %}" alt="img02" /> -->
+    </div>
+    <div class="page" id="page-software">
+      <header class="bp-header cf">
+        <h1 class="bp-header__title">Интерактивная визуализация данных</h1>
+        <p class="info">
+          Сервис позволяет создать интерактивные графики из данных, полученных из системы GeoCode.
+           <br />Для работы с сервисом перейдите по ссылке: <a href="{% url 'bokeh_app:plot_page' %}" target="_blank">Построение интерактивных графиков</a>
+        </p>
+      </header>
+      <!-- <img class="poster" src="{% static 'images/3.jpg' %}" alt="img03" /> -->
+    </div>
+    <div class="page" id="page-buy">
+      <header class="bp-header cf">
+        <h1 class="bp-header__title">Сделать запрос</h1>
+        <p class="info">
+         По вопросам сотрудничества обращайтесь по адресу <a href="mailto:dmitrii-malov@llc-quant.ru">dmitrii-malov@llc-quant.ru</a>
+        </p>
+      </header>
+      <!-- <img class="poster" src="{% static 'images/6.jpg' %}" alt="img06" /> -->
+    </div>
+    <div class="page" id="page-blog">
+      <header class="bp-header cf">
+        <h1 class="bp-header__title">Блог &amp; Новости</h1>
+        <!-- <p class="info"> -->
+        <iframe width="640" height="360" src="https://www.youtube.com/embed/iIqpiGGju8w" frameborder="0" allowfullscreen></iframe><br />
+        Будущее уже наступило: «цифровые логисты» управляют доставкой топлива на заправки, маршруты выстраивает  искусственный интеллект, а датчики с бензовозов контролируют сохранность доставки.
+        Такие проекты внедряет команда топливно-логистического контура ДРП. 25 августа в 11:00​ мск включайте эфир «Искусственный интеллект в логистике: доставка топлива 2020».
+        В прямом эфире пообщаемся с Александром Хлибцевым, владельцем продукта «Сохранная доставка», а также с нашей коллегой Еленой Ким, пиарщиком инфрастурктурных бизнесов.<br />
+
+        <!-- </p> -->
+      </header>
+      <!-- <img class="poster" src="{% static 'images/1.jpg' %}" alt="img01" /> -->
+    </div>
+    <div class="page" id="page-contact">
+      <header class="bp-header cf">
+        <h1 class="bp-header__title">Контакты</h1>
+        <p class="info">
+          Малов Дмитрий Александрович<br />
+        </p>
+      </header>
+      <!-- <img class="poster" src="{% static 'images/4.jpg' %}" alt="img04" /> -->
+    </div>
+  </div>
+  <!-- /pages-stack -->
+  <button class="menu-button"><span>Menu</span></button>
+  <script src="{% static 'js/classie.js' %}"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+    <div class="hero">
+        <div class="logo">
+          <img src="{% static 'images/cerber_logo.svg' %}" alt="Сохранная Доставка">
+        </div>
+        <div class="hero__title">ГазпромНефть</div>
+
+        <div class="hero__title_2">Сохранная Доставка</div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+        <div class="cube"></div>
+
+
+<div class="recognition_container">
+  <img src="{% static "images/start_page/recognition_button.jpg" %}" alt="Распознавание объектов на видео/фото" style="width:100%">
+  <a href="{% url 'object_recognition:recognition_page' %}" class='btn'>Распознавание объектов на видео/фото</a>
+</div>
+
+<div class="plot_container">
+  <img src="{% static "images/start_page/plot_button.jpg" %}" alt="Построение интерактивных графиков" style="width:100%">
+  <a href="{% url 'bokeh_app:plot_page' %}"  class="btn">Построение интерактивных графиков</a>
+
+</div>
+</div>
+</body>
+
+</html>
